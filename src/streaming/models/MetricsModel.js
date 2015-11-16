@@ -205,8 +205,9 @@ MediaPlayer.models.MetricsModel = function () {
             return vo;
         },
 
-        addBufferState: function (mediaType, state, target) {
+        addBufferState: function (mediaType, t, state, target) {
             var vo = new MediaPlayer.vo.metrics.BufferState();
+            vo.t = t;
             vo.target = target;
             vo.state = state;
             this.getMetricsFor(mediaType).BufferState.push(vo);

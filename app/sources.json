@@ -65,6 +65,11 @@
         { "url" : "http://dash.edgesuite.net/dash264/TestCasesMCA/fraunhofer/MPEG_Surround/2/ElephantsDream_6ch/elephants_dream_480p_mps5_1_sidx.mpd","name" : "MPEG Surround 1", "browsers": "cdsbi" },
         { "url" : "http://dash.edgesuite.net/dash264/TestCasesMCA/fraunhofer/MPEG_Surround/2/Sintel_6ch/sintel_480p_mps5_1_sidx.mpd","name" : "MPEG Surround 2", "browsers": "cdsbi" },
         {
+            "name": "Remote Big Buck Bunny",
+            "url": "http://cache-01.cloudapp.net/videos/BBB/stream.mpd",
+            "browsers": "cdsbi"
+        },
+        {
             "name": "Local Big Buck Bunny",
             "url": "/videos/BBB/stream.mpd",
             "browsers": "cdsbi"

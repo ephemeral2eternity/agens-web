@@ -30,8 +30,9 @@
  */
 MediaPlayer.vo.metrics.BufferState = function () {
     "use strict";
-    this.target = null; // Required Buffer Level determined by the BufferLevelRule.
+    this.t = null;      // Real-Time | Time of the measurement of the buffer level.
     this.state = MediaPlayer.dependencies.BufferController.BUFFER_EMPTY;
+    this.target = null; // Required Buffer Level determined by the BufferLevelRule.
 };
 
 MediaPlayer.vo.metrics.BufferState.prototype = {

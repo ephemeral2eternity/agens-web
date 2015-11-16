@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html ng-app="AGENS" xmlns="http://www.w3.org/1999/xhtml" xml:lang="EN" lang="EN" dir="ltr">
+<head>
+    <title>AGENS</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+    <meta http-equiv="imagetoolbar" content="no" />
+    <link rel="stylesheet" href="app/css/agens.css" type="text/css">
+    <!-- http://angularjs.org/ -->
+    <script src="app/lib/angular/angular.min.js"></script>
+    <script src="app/lib/angular/angular-resource.min.js"></script>
+    <script src="app/agens.js"></script>
+</head>
+<body id="top" ng-controller="GalleryController">
+<div class="wrapper col1">
+  <div id="header">
+    <div id="topnav">
+      <ul>
+        <li><a href="/about.html">About Us</a><span>Members</span></li>
+        <li><a href="/gallery.html">Video</a><span>Available Videos</span></li>
+        <li><a href="/demo.html">Demo</a><span>A Video Player Demo</span></li>
+        <li><a href="/index.html">Homepage</a><span>Project Description</span></li>
+      </ul>
+    </div>
+    <div class="fl_left">
+      <h1><a href="#">AGENS</a></h1>
+      <p>An Agent-based Management and Control System for Large-Scale VoD Service on Cloud</p>
+    </div>
+    <br class="clear" />
+  </div>
+</div>
+<!-- ####################################################################################################### -->
+<div class="wrapper col3">
+  <div id="breadcrumb">
+    <ul>
+      <li class="first">You Are Here</li>
+      <li>&#187;</li>
+      <li><a href="#">Videos</a></li>
+      <li>&#187;</li>
+    </ul>
+  </div>
+</div>
+<!-- ####################################################################################################### -->
+<div class="wrapper col4">
+  <div id="container">
+    <div class="gallery">
+      <h2>Testing Videos</h2>
+      <ul>
+        <li><a rel="gallery_group" href="/demo.html?vidID=BBB" title="Big Buck Bunny"><img src="app/img/videos/BBB.jpg" alt="" /></a></li>
+        <li><a rel="gallery_group" href="/demo.html?vidID=ToS" title="Tears of Steel"><img src="app/img/videos/ToS.jpg" alt="" /></a></li>
+        <li><a rel="gallery_group" href="/demo.html?vidID=st" title="Sintel"><img src="app/img/videos/Sintel.jpg" alt="" /></a></li>
+      </ul>
+      <br class="clear" />
+    </div>
+  </div>
+</div>
+<!-- ####################################################################################################### -->
+<div class="wrapper col5">
+  <div id="footer">
+    <p class="fl_left"><a href="http://theone.ece.cmu.edu"><img src="app/img/theone-banner.png" style="height:60px"></a></p>
+    <p class="fl_right"><a href="http://ece.cmu.edu"><img src="app/img/ece-logo.png" style="height:60px"></a></p>
+    <br class="clear" />
+    <p align="center"><a href="http://theone.ece.cmu.edu/agens">Copyright &copy; 2015 AGENS</a></p>
+    <br class="clear" />
+  </div>
+</div>
+</body>
+</html>

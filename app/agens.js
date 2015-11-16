@@ -1,48 +1,34 @@
 'use strict';
 
-angular.module('DashSourcesService', ['ngResource']).
-    factory('Sources', function($resource){
-        return $resource('app/sources.json', {}, {
-            query: {method:'GET', isArray:false}
+var app = angular.module('AGENS', [])
+.config(
+    // function($routeProvider, $locationProvider, $navbarProvider) {
+    function($locationProvider) {
+        $locationProvider.html5Mode(true);
+        // angular.extend($navbarProvider.defaults, {activeClass: 'in'});
+        /*
+        $routeProvider.when('/', {
+                templateUrl:    'agens.html',
+                controller:     'HomeController'
+            });
+        $routeProvider.when('/about', {
+            templateUrl:    'about.html',
+            controller:     'AboutController'
         });
-    });
-
-angular.module('DashNotesService', ['ngResource']).
-    factory('Notes', function($resource){
-        return $resource('app/notes.json', {}, {
-            query: {method:'GET', isArray:false}
+        $routeProvider.when('/gallery', {
+            templateUrl:    'gallery.html',
+            controller:     'GalleryController'
         });
-    });
-
-angular.module('DashContributorsService', ['ngResource']).
-    factory('Contributors', function($resource){
-        return $resource('app/contributors.json', {}, {
-            query: {method:'GET', isArray:false}
+                $routeProvider.when('/demo', {
+                        templateUrl:    'demo.html',
+                        controller: 'DashController'
         });
-    });
-
-angular.module('DashPlayerLibrariesService', ['ngResource']).
-    factory('PlayerLibraries', function($resource){
-        return $resource('app/player_libraries.json', {}, {
-            query: {method:'GET', isArray:false}
-        });
-    });
-
-angular.module('DashShowcaseLibrariesService', ['ngResource']).
-    factory('ShowcaseLibraries', function($resource){
-        return $resource('app/showcase_libraries.json', {}, {
-            query: {method:'GET', isArray:false}
-        });
-    });
-
-var app = angular.module('DashPlayer', [
-    'DashSourcesService',
-    'DashNotesService',
-    'DashContributorsService',
-    'DashPlayerLibrariesService',
-    'DashShowcaseLibrariesService',
-    'angularTreeview'
-]);
+        $routeProvider.otherwise({
+            redirectTo:     '/',
+            controller:     'MainController', 
+        });*/
+    }
+);
 
 app.directive('chart', function() {
     return {
@@ -61,35 +47,6 @@ app.directive('chart', function() {
                         show: false
                     }
                 };
-                /*options2 = {
-                    series: {
-                        shadowSize: 0
-                    },
-                    yaxis: {
-                        min: 0,
-                        max: 5.1
-                    },
-                    xaxis: {
-                        show: false
-                    }
-                }*/
-
-            // If the data changes somehow, update it in the chart
-            /*scope.$watch('bufferData', function(v) {
-                if (v === null || v === undefined) {
-                    return;
-                }
-
-                if (!chart) {
-                    chart = $.plot(elem, v , options);
-                    elem.show();
-                }
-                else {
-                    chart.setData(v);
-                    chart.setupGrid();
-                    chart.draw();
-                }
-            });*/
 
             // If the data changes somehow, update it in the chart
             scope.$watch('QoEData', function(v) {
@@ -121,7 +78,20 @@ app.directive('chart', function() {
     };
 });
 
-app.controller('DashController', function($scope, Sources, Notes, Contributors, PlayerLibraries, ShowcaseLibraries) {
+app.controller('HomeController', function($scope){
+    return;
+});
+
+app.controller('GalleryController', function($scope){
+    return;
+});
+
+app.controller('AboutController', function($scope){
+    return;
+});
+
+// app.controller('DashController', function($scope, Sources, Notes, Contributors, PlayerLibraries, ShowcaseLibraries) {
+app.controller('DashController', function($scope, $location) {
     var player,
         controlbar,
         video,
@@ -132,12 +102,18 @@ app.controller('DashController', function($scope, Sources, Notes, Contributors, 
         qoeSeries = [],
         maxGraphPoints = 100;
 
+    // Feed the input video
+    $scope.vidID = $location.search()['vidID'];
+
+    if (!$scope.vidID) {
+        $scope.vidID = "BBB";
+    }
+
     ////////////////////////////////////////
     //
     // Metrics
     //
     ////////////////////////////////////////
-
     $scope.videoBitrate = 0;
     $scope.videoIndex = 0;
     $scope.videoPendingIndex = "";
@@ -661,13 +637,42 @@ app.controller('DashController', function($scope, Sources, Notes, Contributors, 
         $scope.showDebug = show;
     }
 
+    /////////////////////////////////////////////
+    //
+    // Player Setup, chenw-2015-1115
+    //
+    ////////////////////////////////////////////
+
+    video = document.querySelector("#videoPlayer");
+    context = new Dash.di.DashContext();
+    player = new MediaPlayer(context);
+    $scope.version = player.getVersion();
+
+    player.startup();
+    player.addEventListener(MediaPlayer.events.ERROR, onError.bind(this));
+    player.addEventListener(MediaPlayer.events.METRIC_CHANGED, metricChanged.bind(this));
+    player.addEventListener(MediaPlayer.events.METRIC_UPDATED, metricUpdated.bind(this));
+    player.addEventListener(MediaPlayer.events.STREAM_SWITCH_COMPLETED, streamSwitch.bind(this));
+    player.addEventListener(MediaPlayer.events.STREAM_INITIALIZED, streamInitialized.bind(this));
+    player.attachView(video);
+    player.attachVideoContainer(document.getElementById("dash-video-player"));
+    player.setAutoPlay(true);
+
+    /*controlbar = new ControlBar(player);
+    controlbar.initialize();
+    controlbar.disable() //controlbar.hide() // other option*/
+
+    var url = "/videos/" + $scope.vidID + "/stream.mpd";
+    console.log("[chenw]" + url);
+    player.attachSource(url, null, '');
+
     ////////////////////////////////////////
     //
     // Player Setup
     //
     ////////////////////////////////////////
 
-    video = document.querySelector(".dash-video-player video");
+    /*video = document.querySelector(".dash-video-player video");
     context = new Dash.di.DashContext();
     player = new MediaPlayer(context);
 
@@ -837,4 +842,5 @@ app.controller('DashController', function($scope, Sources, Notes, Contributors, 
 	    	$scope.doLoad();
 		}
     }
+    */
 });

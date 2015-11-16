@@ -245,3 +245,10 @@ chart {
     font-size: 22px;
     color: #555;
 }
+
+timechart {
+    display: block;
+    width: 100%;
+    height: 185px;
+}
+

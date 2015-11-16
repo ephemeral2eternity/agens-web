@@ -100,6 +100,34 @@ Dash.dependencies.DashMetricsExtensions = function () {
             return -1;
         },
 
+        // Added by chenw-2015-1115, find the maximum representation index
+        findMaxBitrate = function (period, bufferType) {
+            var adaptationSet,
+                adaptationSetArray,
+                representationArray,
+                adaptationSetArrayIndex,
+                representationArrayIndex,
+                representation,
+                maxBitrate = 0;
+
+            if (!period || !bufferType) return maxBitrate;
+
+            adaptationSetArray = period.AdaptationSet_asArray;
+            for (adaptationSetArrayIndex = 0; adaptationSetArrayIndex < adaptationSetArray.length; adaptationSetArrayIndex = adaptationSetArrayIndex + 1) {
+                adaptationSet = adaptationSetArray[adaptationSetArrayIndex];
+                representationArray = adaptationSet.Representation_asArray;
+                for (representationArrayIndex = 0; representationArrayIndex < representationArray.length; representationArrayIndex = representationArrayIndex + 1) {
+                    representation = representationArray[representationArrayIndex];
+                    if (representation.bandwidth > maxBitrate) {
+                        maxBitrate = representation.bandwidth;
+                    }
+                }
+            }
+
+            // console.log("Maximum Bitrate is:" + maxBitrate);
+            return maxBitrate;
+        },
+
         getBandwidthForRepresentation = function (representationId, periodId) {
             var self = this,
                 manifest = self.manifestModel.getValue(),
@@ -133,6 +161,17 @@ Dash.dependencies.DashMetricsExtensions = function () {
 
             maxIndex = findMaxBufferIndex.call(this, period, bufferType);
             return maxIndex;
+        },
+
+        // Added by chenw-2015-1115, find the maximum representation index
+        getMaxAllowedBitrateForBufferType = function (bufferType, periodIdx) {
+            var self = this,
+            manifest = self.manifestModel.getValue(),
+            maxBW,
+            period = manifest.Period_asArray[periodIdx];
+
+            maxBW = findMaxBitrate.call(this, period, bufferType);
+            return maxBW;
         },
 
         getMaxAllowedIndexForBufferType = function (bufferType, periodId) {
@@ -329,6 +368,108 @@ Dash.dependencies.DashMetricsExtensions = function () {
             return curentDVRInfo;
         },
 
+        // Add getBufferState function variable to return current buffer state, chenw-2015-1114
+        getCurrentBufferState = function (metrics) {
+            if (metrics === null) {
+                return null;
+            }
+
+            var bufferState = metrics.BufferState,
+                bufferStateLength,
+                bufferStateLastIndex,
+                currentBufferState;
+
+            if (bufferState === null || bufferState.length <= 0) {
+                return null;
+            }
+
+            bufferStateLength = bufferState.length;
+            bufferStateLastIndex = bufferStateLength - 1;
+
+            currentBufferState = bufferState[bufferStateLastIndex].state;
+
+            return currentBufferState;
+        },
+
+        // Get current stalling time, chenw-2015-1115
+        getCurrentStalling = function (metrics) {
+            var bufferState = metrics.BufferState,
+                bufferStateLength,
+                bufferStateLastIndex,
+                curTS,
+                curStallingPeriod = 0;
+
+            if (metrics === null) {
+                return curStallingPeriod;
+            }
+
+            if (bufferState === null || bufferState.length <= 0) {
+                return curStallingPeriod;
+            }
+
+            bufferStateLength = bufferState.length;
+            bufferStateLastIndex = bufferStateLength - 1;
+            curTS = bufferState[bufferStateLastIndex].t;
+
+            // Compute stalling time
+            if (bufferStateLastIndex - 1 > 0) {
+                for (var curIndex = bufferStateLastIndex - 1; curIndex > 0; curIndex --)
+                {
+                    if (bufferState[curIndex].state == MediaPlayer.dependencies.BufferController.BUFFER_LOADED)
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        curStallingPeriod = (curTS - bufferState[curIndex].t)/1000.0;
+                    }
+                }
+            }
+
+            return curStallingPeriod;
+        },
+
+        // Get total stalling time, chenw-2015-1115
+        getTotalStalling = function (metrics) {
+            var bufferState = metrics.BufferState,
+                bufferStateLength,
+                bufferStateLastIndex,
+                preStallTS = null,
+                totalStallingPeriod = 0;
+
+            if (metrics === null) {
+                return totalStallingPeriod;
+            }
+
+            if (bufferState === null || bufferState.length <= 0) {
+                return totalStallingPeriod;
+            }
+
+            bufferStateLength = bufferState.length;
+            bufferStateLastIndex = bufferStateLength - 1;
+
+            // Compute total stalling time
+            for (var curIndex = 0; curIndex < bufferStateLength; curIndex ++)
+            {
+                if (bufferState[curIndex].state == MediaPlayer.dependencies.BufferController.BUFFER_LOADED)
+                {
+                    if (preStallTS !== null) {
+                        totalStallingPeriod = totalStallingPeriod + (bufferState[curIndex].t - preStallTS)/1000.0;
+                        preStallTS = null;
+                    }
+                }
+                else
+                {
+                    if (preStallTS == null)
+                    {
+                        preStallTS = bufferState[curIndex].t;
+                    }     
+                }
+            }
+
+            return totalStallingPeriod;
+        },
+
         getLatestMPDRequestHeaderValueByID = function (metrics, id) {
 
             var httpRequestList,
@@ -425,7 +566,11 @@ Dash.dependencies.DashMetricsExtensions = function () {
         getCurrentManifestUpdate: getCurrentManifestUpdate,
         getLatestFragmentRequestHeaderValueByID:getLatestFragmentRequestHeaderValueByID,
         getLatestMPDRequestHeaderValueByID:getLatestMPDRequestHeaderValueByID,
-        getRequestsQueue: getRequestsQueue
+        getRequestsQueue: getRequestsQueue,
+        getCurrentBufferState: getCurrentBufferState,          // chenw-2015-1114
+        getCurrentStalling: getCurrentStalling,         // chenw-2015-1115
+        getTotalStalling: getTotalStalling,          // chenw-2015-1115
+        getMaxAllowedBitrateForBufferType: getMaxAllowedBitrateForBufferType          // chenw-2015-1115
     };
 };
 

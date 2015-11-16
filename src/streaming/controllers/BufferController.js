@@ -43,7 +43,8 @@ MediaPlayer.dependencies.BufferController = function () {
         type,
         buffer = null,
         minBufferTime,
-        hasSufficientBuffer = null,
+        hasSufficientBuffer = null,     
+        // hasSufficientBuffer = false,  // chenw-1115-2015
         appendedBytesInfo,
         wallclockTicked = 0,
         appendingMediaChunk = false, // false or chunk
@@ -225,7 +226,7 @@ MediaPlayer.dependencies.BufferController = function () {
             ranges = self.sourceBufferExt.getAllRanges(buffer);
 
             if (ranges) {
-                //self.log("Append complete: " + ranges.length);
+                // self.log("Append complete: " + ranges.length);
                 if (ranges.length > 0) {
                     var i,
                         len;
@@ -275,7 +276,6 @@ MediaPlayer.dependencies.BufferController = function () {
         },
 
         onPlaybackProgression = function() {
-
                 updateBufferLevel.call(this);
                 addBufferMetrics.call(this);
 
@@ -287,11 +287,16 @@ MediaPlayer.dependencies.BufferController = function () {
 
             bufferLevel = self.sourceBufferExt.getBufferLength(buffer, currentTime);
 
+            // Check buffer status in log messages, chenw-1115-2015
+            // self.log("[chenw]Buffer state: " + bufferLevel);
+
             self.notify(MediaPlayer.dependencies.BufferController.eventList.ENAME_BUFFER_LEVEL_UPDATED, {bufferLevel: bufferLevel});
 
-            if (!this.streamProcessor.getStreamInfo().isLast){
-                checkIfSufficientBuffer.call(self);
-            }
+            // Check buffer status in log messages, chenw-1115-2015
+            checkIfSufficientBuffer.call(this);
+            // if (!this.streamProcessor.getStreamInfo().isLast){
+            //    checkIfSufficientBuffer.call(self);
+            //}
         },
 
         addBufferMetrics = function() {
@@ -299,7 +304,7 @@ MediaPlayer.dependencies.BufferController = function () {
 
             //TODO will need to fix how we get bufferTarget... since we ony load one at a time. but do it in the addBufferMetrics call not here
             //bufferTarget = fragmentsToLoad > 0 ? (fragmentsToLoad * fragmentDuration) + bufferLevel : bufferTarget;
-            this.metricsModel.addBufferState(type, getBufferState(), bufferTarget);
+            this.metricsModel.addBufferState(type, new Date(), getBufferState(), bufferTarget);
 
             //TODO may be needed for MULTIPERIOD PLEASE CHECK Turning this off for now... not really needed since we load sync...
             //var level = bufferLevel,
@@ -334,6 +339,8 @@ MediaPlayer.dependencies.BufferController = function () {
         },
 
         notifyIfSufficientBufferStateChanged = function(state) {
+            // chenw-1115-2015, call notifyIfSufficientBufferStateChanged
+            // this.log("[chenw]If there is sufficient buffer: " + hasSufficientBuffer);
             if (hasSufficientBuffer === state || (type === "fragmentedText" && this.textSourceBuffer.getAllTracksAreDisabled())) return;
 
             hasSufficientBuffer = state;
