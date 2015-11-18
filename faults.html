@@ -1,0 +1,95 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html class="ng-scope" ng-app="AGENS" xmlns="http://www.w3.org/1999/xhtml" xml:lang="EN" dir="ltr" lang="EN"><head>
+<title>AGENS</title>
+    <title>AGENS</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+    <meta http-equiv="imagetoolbar" content="no" />
+    <link rel="stylesheet" href="app/css/agens.css" type="text/css">
+    <!-- http://angularjs.org/ -->
+    <script src="app/lib/angular/angular.min.js"></script>
+    <script src="app/lib/angular/angular-resource.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="app/agens.js"></script>
+    <script>
+    $('#cpu_stress_form').submit(function() { // catch the form's submit event
+      $.ajax({ // create an AJAX call...
+        data: $(this).serialize(), // get the form data
+        type: $(this).attr('get'), // GET or POST
+        url: $(this).attr('cpu'), // the file to call
+        success: function(response) { // on success..
+          $('#cpu_stress_start').html(response); // update the DIV
+        }
+      });
+      return false; // cancel original event to prevent form submitting
+    });
+</script>
+</head>
+<body class="ng-scope" id="top" ng-controller="AboutController">
+<div class="wrapper col1">
+  <div id="header">
+    <div id="topnav">
+      <ul>
+        <li><a href="/faults.html">Inject Faults</a><span>Anomaly Benchmark</span></li>
+        <li><a href="/about.html">About Us</a><span>Members</span></li>
+        <li><a href="/gallery.html">Video</a><span>Available Videos</span></li>
+        <li><a href="/demo.html">Demo</a><span>A Video Player Demo</span></li>
+        <li><a href="/index.html">Homepage</a><span>Project Description</span></li>
+      </ul>
+    </div>
+    <div class="fl_left">
+      <h1><a href="#">AGENS</a></h1>
+      <p>An Agent-based Management and Control System for Large-Scale VoD Service on Cloud</p>
+    </div>
+    <br class="clear">
+  </div>
+</div>
+<!-- ####################################################################################################### -->
+<div class="wrapper col3">
+  <div id="breadcrumb">
+    <ul>
+      <li class="first">You Are Here</li>
+      <li>»</li>
+      <li><a href="#">Anomaly Benchmark</a></li>
+      <li>»</li>
+    </ul>
+  </div>
+</div>
+<!-- ####################################################################################################### -->
+<div class="wrapper col4">
+  <div id="container">
+      <div> <h1><strong>CPU Fault Injection: </strong></h1>
+      <form id="cpu_stress_form">
+        <fieldset>
+          <legend>Using "stress" tool to generate N workers running sqrt() for T time period!:</legend>
+          The Number of Workers:<br>
+          <input type="number" name="N" value=8><br>
+          The duration of anomaly (Seconds):<br>
+          <input type="number" name="T" value=10><br>
+          <input type="submit" value="Stress">
+        </fieldset>
+      </form>
+      <div id="cpu_stress_start"></div>
+  </div>
+</div>
+<!-- ####################################################################################################### -->
+   <div> <h1><strong>Required Resources: </strong></h1>
+          <ol>
+              <li>Google Cloud Computing Engine (GCE): Used to deploy video servers.</li>
+              <li>Google Cloud Storage (GCS): Used to collect monitoring data and backup for videos.</li>
+              <li>PlanetLab: Used to run emulated clients to stream videos.</li>
+          </ol>
+   </div>
+</div>
+<!-- ####################################################################################################### -->
+<div class="wrapper col5">
+  <div id="footer">
+    <p class="fl_left"><a href="http://theone.ece.cmu.edu/"><img src="app/img/theone-banner.png" style="height:60px"></a></p>
+    <p class="fl_right"><a href="http://ece.cmu.edu/"><img src="app/img/ece-logo.png" style="height:60px"></a></p>
+    <br class="clear">
+    <p align="center"><a href="http://theone.ece.cmu.edu/agens">Copyright © 2015 AGENS</a></p>
+    <br class="clear">
+  </div>
+</div>
+
+
+</body></html>
