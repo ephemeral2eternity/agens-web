@@ -90,6 +90,69 @@ app.controller('AboutController', function($scope){
     return;
 });
 
+app.controller('FaultController', function($scope, $http, $location){
+    /* All scope variables initializaiton, chenw-2015-1117*/
+    $scope.cpu_stress_resp = '';
+    $scope.io_stress_resp = '';
+    $scope.mem_stress_resp = '';
+    $scope.bw_stress_resp = '';
+    $scope.cpu_N = 1;
+    $scope.cpu_T = 10;
+    $scope.io_N = 2;
+    $scope.io_T = 10;
+    $scope.mem_N = 1;
+    $scope.mem_B = 128;
+    $scope.mem_T = 10;
+    $scope.bw_X = 400;
+    $scope.bw_T = 30;
+    $scope.bw_opts = {
+	available_options: [
+	{id: '0', name: 'inbound'},
+	{id: '1', name: 'outbound'}],
+	selected_option: {id: '1', name: 'outbound'},
+    };
+    $scope.selected_bw_option = 0;
+
+    $scope.cpustress = function() {
+	var N=$scope.cpu_N, T=$scope.cpu_T;
+	console.log("[chenw]Starts stressing cpu with " + N + " workers!")
+	// console.log("[chenw]" + $location.path())
+	$http.get('/anomaly/cpu?N=' + N + '&T=' + T)
+	.success(function(response) {$scope.cpu_stress_resp = response;});
+    }
+    
+    $scope.iostress = function() {
+	var N=$scope.io_N, T=$scope.io_T;
+	console.log("[chenw]Starts stressing I/O with " + N + " workers!")
+	// console.log("[chenw]" + $location.path())
+	$http.get('/anomaly/io?N=' + N + '&T=' + T)
+	.success(function(response) {$scope.io_stress_resp = response;});
+    }
+    
+    $scope.memstress = function() {
+	var B = $scope.mem_B, N=$scope.mem_N, T=$scope.mem_T;
+	console.log("[chenw]Starts taking memory with " + N + " worker and each worker malloc " + B + " MB memory for " + T + " seconds!")
+	$http.get('/anomaly/mem?N=' + N + '&B=' + B + '&T=' + T)
+	.success(function(response) {$scope.mem_stress_resp = response;});
+    }
+
+    $scope.bwstress = function() {
+	var X = $scope.bw_X, T=$scope.bw_T;
+	console.log($scope.bw_opts.selected_option);
+	if ($scope.bw_opts.selected_option.id == '0') {
+		console.log("[chenw]Starts throttling inbound bandwidth capacity to " + X + " Mbps for " + T + " seconds!")
+		$http.get('/anomaly/bw?type=0&X=' + X + '&T=' + T)
+		.success(function(response) {$scope.mem_stress_resp = response;});
+	}
+	else {
+		console.log("[chenw]Starts throttling outbound bandwidth capacity to " + X + " Mbps for " + T + " seconds!")
+		$http.get('/anomaly/bw?type=1&X=' + X + '&T=' + T)
+	}
+    }
+
+    // return;
+});
+
 // app.controller('DashController', function($scope, Sources, Notes, Contributors, PlayerLibraries, ShowcaseLibraries) {
 app.controller('DashController', function($scope, $location) {
     var player,

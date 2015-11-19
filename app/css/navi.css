@@ -9,7 +9,7 @@ Licence: <a href="http://www.os-templates.com/template-terms">Website Template L
 #topnav{
 	display:block;
 	float:right;
-	width:650px;
+	width:700px;
 	font-size:14px;
 	font-family:Georgia, "Times New Roman", Times, serif;
 	}
@@ -124,7 +124,7 @@ Licence: <a href="http://www.os-templates.com/template-terms">Website Template L
 	padding:0;
 	}
 
-#column .subnav ul ul, #column .subnav ul ul ul, #column .subnav ul ul ul ul, #column .subnav ul ul ul ul ul{border-top:none; padding-top:0;}
+#column .subnav ul ul, #column .subnav ul ul ul, #column .subnav ul ul ul ul, #column .subnav ul ul ul ul ul, #column .subnav ul ul ul ul ul ul {border-top:none; padding-top:0;}
 
 #column .subnav a{
 	display:block;
@@ -139,7 +139,8 @@ Licence: <a href="http://www.os-templates.com/template-terms">Website Template L
 #column .subnav a:hover{color:#FFFF00; background-color:#161616;}
 
 #column .subnav ul ul a, #column .subnav ul ul ul a, #column .subnav ul ul ul ul a, #column .subnav ul ul ul ul ul a{background:url("../images/white_file.gif") no-repeat #1F1F1F;}
-#column .subnav ul ul a{padding-left:40px; background-position:30px center;}
-#column .subnav ul ul ul a{padding-left:50px; background-position:40px center;}
-#column .subnav ul ul ul ul a{padding-left:60px; background-position:50px center;}
-#column .subnav ul ul ul ul ul a{padding-left:70px; background-position:60px center;}
+#column .subnav ul ul a{padding-left:30px; background-position:30px center;}
+#column .subnav ul ul ul a{padding-left:40px; background-position:40px center;}
+#column .subnav ul ul ul ul a{padding-left:50px; background-position:50px center;}
+#column .subnav ul ul ul ul ul a{padding-left:60px; background-position:60px center;}
+#column .subnav ul ul ul ul ul ul a{padding-left:70px; background-position:70px center;}

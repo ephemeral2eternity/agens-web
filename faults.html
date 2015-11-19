@@ -10,27 +10,27 @@
     <script src="app/lib/angular/angular-resource.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script src="app/agens.js"></script>
-    <script>
-    $('#cpu_stress_form').submit(function() { // catch the form's submit event
+    <!-- script>
+    $('form#cpu_stress_form').submit(function() { // catch the form's submit event
       $.ajax({ // create an AJAX call...
         data: $(this).serialize(), // get the form data
         type: $(this).attr('get'), // GET or POST
-        url: $(this).attr('cpu'), // the file to call
+        url: $(this).attr('/anomaly/cpu'), // the file to call
         success: function(response) { // on success..
-          $('#cpu_stress_start').html(response); // update the DIV
+		$('div#cpu_stress_start').html(response); // update the DIV
         }
       });
       return false; // cancel original event to prevent form submitting
     });
-</script>
+    </script-->
 </head>
-<body class="ng-scope" id="top" ng-controller="AboutController">
+<body class="ng-scope" id="top" ng-controller="FaultController">
 <div class="wrapper col1">
   <div id="header">
     <div id="topnav">
       <ul>
-        <li><a href="/faults.html">Inject Faults</a><span>Anomaly Benchmark</span></li>
         <li><a href="/about.html">About Us</a><span>Members</span></li>
+        <li><a href="/faults.html">Inject Faults</a><span>Anomaly Benchmark</span></li>
         <li><a href="/gallery.html">Video</a><span>Available Videos</span></li>
         <li><a href="/demo.html">Demo</a><span>A Video Player Demo</span></li>
         <li><a href="/index.html">Homepage</a><span>Project Description</span></li>
@@ -48,9 +48,9 @@
   <div id="breadcrumb">
     <ul>
       <li class="first">You Are Here</li>
-      <li>»</li>
+      <li>&#187;</li>
       <li><a href="#">Anomaly Benchmark</a></li>
-      <li>»</li>
+      <li>&#187;</li>
     </ul>
   </div>
 </div>
@@ -58,19 +58,67 @@
 <div class="wrapper col4">
   <div id="container">
       <div> <h1><strong>CPU Fault Injection: </strong></h1>
-      <form id="cpu_stress_form">
+      <!-- form id="cpu_stress_form" action="/anomaly/cpu" method="get" -->
+      <form ng-submit="cpustress()">
         <fieldset>
-          <legend>Using "stress" tool to generate N workers running sqrt() for T time period!:</legend>
+          <h2>Using "stress" tool to spawn N workers spinning sqrt() for T time period to increase CPU utilization:</h2>
           The Number of Workers:<br>
-          <input type="number" name="N" value=8><br>
+          <input type="number" ng-model="cpu_N" min="1" /><br>
           The duration of anomaly (Seconds):<br>
-          <input type="number" name="T" value=10><br>
-          <input type="submit" value="Stress">
+          <input type="number" ng-model="cpu_T" min="5" step="5" /><br>
+          <input type="submit" id="cpustress" value="Stress CPU" />
         </fieldset>
       </form>
-      <div id="cpu_stress_start"></div>
+      {{cpu_stress_resp}}
+      </div>
+      <hr>
+      <div> <h1><strong>I/O Fault Injection: </strong></h1>
+      <form ng-submit="iostress()">
+        <fieldset>
+          <h2>Using "stress" tool to spawn N workers spinning on sync() for T time period to increase I/O utilization:</h2>
+          The Number of Workers:<br>
+          <input type="number" ng-model="io_N" min="1" /><br>
+          The duration of anomaly (Seconds):<br>
+          <input type="number" ng-model="io_T" min="5" step="5" /><br>
+          <input type="submit" id="iostress" value="Stress I/O" />
+        </fieldset>
+      </form>
+      {{io_stress_resp}}
+      </div>
+      <hr>
+      <div> <h1><strong>Memory Fault Injection: </strong></h1>
+      <form ng-submit="memstress()">
+        <fieldset>
+          <h2>Using "stress" tool to spawn N workers spinning on malloc()/free() for T time period and each worker malloc B MBytes to emulate memory leak:</h2>
+          The Number of Workers:<br>
+          <input type="number" ng-model="mem_N" min="1" /><br>
+          The Memory to malloc per worker:<br>
+          <input type="number" ng-model="mem_B" min="64" step="64" /><br>
+          The duration of anomaly (Seconds):<br>
+          <input type="number" ng-model="mem_T" min="5" step="5" /><br>
+          <input type="submit" id="memstress" value="Stress Memory" />
+        </fieldset>
+      </form>
+      {{mem_stress_resp}}
+      </div>
+      <hr>
+      <div> <h1><strong>Network Interface Fault Injection: </strong></h1>
+	<h2>Using "wondershaper" tool to throttle the inbound/outbound bandwidth to X Kbps to server overload/network congestion:</h2>
+	<form ng-submit="bwstress()">
+		<label>Throttle inbound/outbound traffic:
+			<select name="selected_option" id="selected_option" ng-model="bw_opts.selected_option">
+				<option  ng-repeat="opt in bw_opts.available_options" value="{{opt}}">{{opt.name}}</option>
+			</select>
+		</label><br>
+		Throttle the capacity to X (Mbps):<br>
+		<input type="number" ng-model="bw_X" min="100" step="100" /><br>
+		The duration of anomaly (Seconds):<br>
+          	<input type="number" ng-model="bw_T" min="5" step="5" /><br>
+          	<input type="submit" id="bwstress" value="Throttle Bandwidth" />
+	</form>
+      	{{bw_stress_resp}}
+      </div>
   </div>
-</div>
 <!-- ####################################################################################################### -->
    <div> <h1><strong>Required Resources: </strong></h1>
           <ol>
@@ -86,7 +134,7 @@
     <p class="fl_left"><a href="http://theone.ece.cmu.edu/"><img src="app/img/theone-banner.png" style="height:60px"></a></p>
     <p class="fl_right"><a href="http://ece.cmu.edu/"><img src="app/img/ece-logo.png" style="height:60px"></a></p>
     <br class="clear">
-    <p align="center"><a href="http://theone.ece.cmu.edu/agens">Copyright © 2015 AGENS</a></p>
+    <p align="center"><a href="http://theone.ece.cmu.edu/agens">Copyright &#169; 2015 AGENS</a></p>
     <br class="clear">
   </div>
 </div>
