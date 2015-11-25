@@ -44,8 +44,9 @@ app.directive('chart', function() {
                         max: 5.1
                     },
                     xaxis: {
-                        // show: false
-                        mode: "time"
+                        show: false,
+                        mode: "time",
+                        timeformat: "%h/%M/%S"
                     }
                 };
 
