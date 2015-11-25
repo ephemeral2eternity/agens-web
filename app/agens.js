@@ -162,7 +162,8 @@ app.controller('DashController', function($scope, $location) {
         context,
         videoSeries = [],
         audioSeries = [],
-        qoeSeries = [],
+        qoe1Series = [],
+        qoe2Series = [],
         maxGraphPoints = 100;
 
     // Feed the input video
@@ -194,7 +195,8 @@ app.controller('DashController', function($scope, $location) {
     $scope.videoFreezingTime = 0;
     $scope.videoMaxBitrate = 0;
     $scope.totalFreezingPeriod = 0;
-    $scope.videoQoE = 5;
+    $scope.videoQoE1 = 5;
+    $scope.videoQoE2 = 5;
 
     $scope.audioBitrate = 0;
     $scope.audioIndex = 0;
@@ -497,7 +499,7 @@ app.controller('DashController', function($scope, $location) {
 
     // added by chenw-2015-1115, computing real-time video QoE based on current chunk bitrate and 
     // current freezing time.
-    function computeQoE(currentBitrate, maxBitrate, currentFreezingTime) {
+    function computeLinQoE(currentBitrate, maxBitrate, currentFreezingTime) {
         var a0 = 1.3554, a1 = 40.0, 
         b0 = 5.0, b1 = 6.3484, b2 = 4.4, b3 = 0.72134, 
         q0 = 5.0, 
@@ -514,6 +516,31 @@ app.controller('DashController', function($scope, $location) {
         q1 = a0 * Math.log(a1 * currentBitrate/maxBitrate);
 
         qoe = delta * q0 + (1 - delta) * q1;
+
+        return qoe;
+    }
+
+    // added by chenw-2015-1115, computing real-time video QoE based on current chunk bitrate and 
+    // current freezing time.
+    function computeCasQoE(currentBitrate, maxBitrate, currentFreezingTime) {
+        var a0 = 1.3554, a1 = 40.0, 
+        b0 = 0.87942, b1 = 1.26968, b2 = 4.4, b3 = 0.72134, 
+        q0 = 1.0, 
+        q1 = 5.0,
+        base, 
+        qoe;
+
+        if (currentFreezingTime > 0 && currentFreezingTime < 10) {
+            base = Math.log(b2/currentFreezingTime);
+            q0 = b0 - b1 / (1 + Math.exp(base * b3));
+        }
+        else if (currentFreezingTime >= 10) {
+            q0 = 0;
+        }
+
+        q1 = a0 * Math.log(a1 * currentBitrate/maxBitrate);
+
+        qoe = q0 * q1;
 
         return qoe;
     }
@@ -546,7 +573,8 @@ app.controller('DashController', function($scope, $location) {
                 $scope.videoFreezingTime = metrics.stallingPeriod;
                 $scope.totalFreezingPeriod = metrics.totalStallingPeriod;
                 $scope.videoMaxBitrate = metrics.vidMaxBitrate;
-                $scope.videoQoE = computeQoE($scope.videoBitrate, $scope.videoMaxBitrate, $scope.videoFreezingTime);
+                $scope.videoQoE1 = computeLinQoE($scope.videoBitrate, $scope.videoMaxBitrate, $scope.videoFreezingTime);
+                $scope.videoQoE2 = computeCasQoE($scope.videoBitrate, $scope.videoMaxBitrate, $scope.videoFreezingTime);
                 if (metrics.movingLatency["video"]) {
                     $scope.videoLatencyCount = metrics.movingLatency["video"].count;
                     $scope.videoLatency = metrics.movingLatency["video"].low.toFixed(3) + " < " + metrics.movingLatency["video"].average.toFixed(3) + " < " + metrics.movingLatency["video"].high.toFixed(3);
@@ -563,16 +591,22 @@ app.controller('DashController', function($scope, $location) {
                 point = [parseFloat(video.currentTime), Math.round(parseFloat(metrics.bufferLengthValue))];
                 videoSeries.push(point);
 
-                qoePoint = [parseFloat(video.currentTime), parseFloat($scope.videoQoE)];
-                qoeSeries.push(qoePoint);
+                qoe1Point = [parseFloat(video.currentTime), parseFloat($scope.videoQoE1)];
+                qoe1Series.push(qoe1Point);
                 // console.log("[chenw]" + qoeSeries);
+                qoe2Point = [parseFloat(video.currentTime), parseFloat($scope.videoQoE2)];
+                qoe2Series.push(qoe2Point);
 
                 if (videoSeries.length > maxGraphPoints) {
                     videoSeries.splice(0, 1);
                 }
 
-                if (qoeSeries.length > maxGraphPoints) {
-                    qoeSeries.splice(0, 1);
+                if (qoe1Series.length > maxGraphPoints) {
+                    qoe1Series.splice(0, 1);
+                }
+
+                if (qoe2Series.length > maxGraphPoints) {
+                    qoe2Series.splice(0, 1);
                 }
             }
         }
@@ -676,8 +710,13 @@ app.controller('DashController', function($scope, $location) {
 
     $scope.QoEData = [
         {
-            data: qoeSeries,
-            label: "Real-time Video QoE",
+            data: qoe1Series,
+            label: "Linear QoE Model",
+            color: "#2980B9"
+        }
+        {
+            data: qoe2Series,
+            label: "Cascading QoE Model",
             color: "#E74C3C"
         }
     ];
