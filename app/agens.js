@@ -548,7 +548,8 @@ app.controller('DashController', function($scope, $location) {
     function metricChanged(e) {
         var metrics,
             point,
-            qoePoint,
+            qoe1Point,
+            qoe2Point,
             treeData,
             bufferedRanges = [];
 
@@ -713,7 +714,7 @@ app.controller('DashController', function($scope, $location) {
             data: qoe1Series,
             label: "Linear QoE Model",
             color: "#2980B9"
-        }
+        },
         {
             data: qoe2Series,
             label: "Cascading QoE Model",
