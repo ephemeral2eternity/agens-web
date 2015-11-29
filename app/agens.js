@@ -144,7 +144,7 @@ app.controller('FaultController', function($scope, $http, $location){
 	if ($scope.bw_opts.selected_option.id == '0') {
 		console.log("[chenw]Starts throttling inbound bandwidth capacity to " + X + " Mbps for " + T + " seconds!")
 		$http.get('/anomaly/bw?type=0&X=' + X + '&T=' + T)
-		.success(function(response) {$scope.mem_stress_resp = response;});
+		.success(function(response) {$scope.bw_stress_resp = response;});
 	}
 	else {
 		console.log("[chenw]Starts throttling outbound bandwidth capacity to " + X + " Mbps for " + T + " seconds!")
