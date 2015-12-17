@@ -107,6 +107,7 @@ app.controller('FaultController', function($scope, $http, $location){
     $scope.mem_T = 10;
     $scope.bw_X = 400;
     $scope.bw_T = 30;
+    $scope.httpd_T = 30;
     $scope.bw_opts = {
 	available_options: [
 	{id: '0', name: 'inbound'},
