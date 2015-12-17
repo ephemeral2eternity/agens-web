@@ -57,11 +57,12 @@
 <!-- ####################################################################################################### -->
 <div class="wrapper col4">
   <div id="container">
-      <div> <h1><strong>CPU Fault Injection: </strong></h1>
+      <div> <h1><strong>Performance Degrading Faults on Various Types of Resources </strong></h1> </div>
+      <div> <h2>CPU Stress:</h2>
       <!-- form id="cpu_stress_form" action="/anomaly/cpu" method="get" -->
       <form ng-submit="cpustress()">
         <fieldset>
-          <h2>Using "stress" tool to spawn N workers spinning sqrt() for T time period to increase CPU utilization:</h2>
+          Using "stress" tool to spawn N workers spinning sqrt() for T time period to increase CPU utilization:
           The Number of Workers:<br>
           <input type="number" ng-model="cpu_N" min="1" /><br>
           The duration of anomaly (Seconds):<br>
@@ -71,11 +72,11 @@
       </form>
       {{cpu_stress_resp}}
       </div>
-      <hr>
-      <div> <h1><strong>I/O Fault Injection: </strong></h1>
+      <br>
+      <div> <h2>I/O Stress:</h2>
       <form ng-submit="iostress()">
         <fieldset>
-          <h2>Using "stress" tool to spawn N workers spinning on sync() for T time period to increase I/O utilization:</h2>
+          Using "stress" tool to spawn N workers spinning on sync() for T time period to increase I/O utilization:
           The Number of Workers:<br>
           <input type="number" ng-model="io_N" min="1" /><br>
           The duration of anomaly (Seconds):<br>
@@ -85,11 +86,11 @@
       </form>
       {{io_stress_resp}}
       </div>
-      <hr>
-      <div> <h1><strong>Memory Fault Injection: </strong></h1>
+      <br>
+      <div> <h2>Memory Stress:</h2>
       <form ng-submit="memstress()">
         <fieldset>
-          <h2>Using "stress" tool to spawn N workers spinning on malloc()/free() for T time period and each worker malloc B MBytes to emulate memory leak:</h2>
+          Using "stress" tool to spawn N workers spinning on malloc()/free() for T time period and each worker malloc B MBytes to emulate memory leak:
           The Number of Workers:<br>
           <input type="number" ng-model="mem_N" min="1" /><br>
           The Memory to malloc per worker:<br>
@@ -101,9 +102,11 @@
       </form>
       {{mem_stress_resp}}
       </div>
+      <br>
       <hr>
-      <div> <h1><strong>Network Interface Fault Injection: </strong></h1>
-	<h2>Using "wondershaper" tool to throttle the inbound/outbound bandwidth to X Kbps to server overload/network congestion:</h2>
+      <div> <h1><strong>Network Related Faults: </strong></h1> </div>
+      <div> <h2> Outbound/Inbound Capacity Throttling </h2>
+	Using "wondershaper" tool to throttle the inbound/outbound bandwidth to X Kbps to server overload/network congestion:
 	<form ng-submit="bwstress()">
 		<label>Throttle inbound/outbound traffic:
 			<select name="selected_option" id="selected_option" ng-model="bw_opts.selected_option">
@@ -118,15 +121,21 @@
 	</form>
       	{{bw_stress_resp}}
       </div>
+      <br>
+      <hr>
+      <div> <h1><strong>Crash Faults</strong></h1> </div>
+      <div> <h2>HTTPD serivce stops: </h2>
+		<form ng-submit="httpdstop()">
+        	<fieldset>
+          	    Stops Apache2 HTTPD service for T seconds:
+          	    The duration of anomaly (Seconds):<br>
+          	    <input type="number" ng-model="httpd_T" min="5" step="5" /><br>
+          	    <input type="submit" id="httpdstop" value="HTTPD Stops" />
+        	</fieldset>
+		</form>
+		{{httpd_stop_resp}}
+      </div>
   </div>
-<!-- ####################################################################################################### -->
-   <div> <h1><strong>Required Resources: </strong></h1>
-          <ol>
-              <li>Google Cloud Computing Engine (GCE): Used to deploy video servers.</li>
-              <li>Google Cloud Storage (GCS): Used to collect monitoring data and backup for videos.</li>
-              <li>PlanetLab: Used to run emulated clients to stream videos.</li>
-          </ol>
-   </div>
 </div>
 <!-- ####################################################################################################### -->
 <div class="wrapper col5">

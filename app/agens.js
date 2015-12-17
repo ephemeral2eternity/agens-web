@@ -153,6 +153,12 @@ app.controller('FaultController', function($scope, $http, $location){
 	}
     }
 
+    $scope.httpdstop = function() {
+	var T=$scope.httpd_T;
+	console.log("[chenw]Stops Apache2 HTTPD for " + T + " seconds!")
+	$http.get('/anomaly/httpd?T=' + T)
+	.success(function(response) {$scope.httpd_stop_resp = response;});
+    }
     // return;
 });
 
