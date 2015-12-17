@@ -62,7 +62,7 @@
       <!-- form id="cpu_stress_form" action="/anomaly/cpu" method="get" -->
       <form ng-submit="cpustress()">
         <fieldset>
-          Using "stress" tool to spawn N workers spinning sqrt() for T time period to increase CPU utilization:
+          Using "stress" tool to spawn N workers spinning sqrt() for T time period to increase CPU utilization:<br>
           The Number of Workers:<br>
           <input type="number" ng-model="cpu_N" min="1" /><br>
           The duration of anomaly (Seconds):<br>
@@ -76,7 +76,7 @@
       <div> <h2>I/O Stress:</h2>
       <form ng-submit="iostress()">
         <fieldset>
-          Using "stress" tool to spawn N workers spinning on sync() for T time period to increase I/O utilization:
+          Using "stress" tool to spawn N workers spinning on sync() for T time period to increase I/O utilization:<br>
           The Number of Workers:<br>
           <input type="number" ng-model="io_N" min="1" /><br>
           The duration of anomaly (Seconds):<br>
@@ -90,7 +90,7 @@
       <div> <h2>Memory Stress:</h2>
       <form ng-submit="memstress()">
         <fieldset>
-          Using "stress" tool to spawn N workers spinning on malloc()/free() for T time period and each worker malloc B MBytes to emulate memory leak:
+          Using "stress" tool to spawn N workers spinning on malloc()/free() for T time period and each worker malloc B MBytes to emulate memory leak:<br>
           The Number of Workers:<br>
           <input type="number" ng-model="mem_N" min="1" /><br>
           The Memory to malloc per worker:<br>
@@ -106,7 +106,7 @@
       <hr>
       <div> <h1><strong>Network Related Faults: </strong></h1> </div>
       <div> <h2> Outbound/Inbound Capacity Throttling </h2>
-	Using "wondershaper" tool to throttle the inbound/outbound bandwidth to X Kbps to server overload/network congestion:
+	Using "wondershaper" tool to throttle the inbound/outbound bandwidth to X Kbps to server overload/network congestion:<br>
 	<form ng-submit="bwstress()">
 		<label>Throttle inbound/outbound traffic:
 			<select name="selected_option" id="selected_option" ng-model="bw_opts.selected_option">
@@ -127,7 +127,7 @@
       <div> <h2>HTTPD serivce stops: </h2>
 		<form ng-submit="httpdstop()">
         	<fieldset>
-          	    Stops Apache2 HTTPD service for T seconds:
+          	    Stops Apache2 HTTPD service for T seconds:<br>
           	    The duration of anomaly (Seconds):<br>
           	    <input type="number" ng-model="httpd_T" min="5" step="5" /><br>
           	    <input type="submit" id="httpdstop" value="HTTPD Stops" />
