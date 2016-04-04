@@ -98,6 +98,7 @@ app.controller('FaultController', function($scope, $http, $location){
     $scope.io_stress_resp = '';
     $scope.mem_stress_resp = '';
     $scope.bw_stress_resp = '';
+    $scope.add_latency_resp = '';
     $scope.cpu_N = 1;
     $scope.cpu_T = 10;
     $scope.io_N = 2;
@@ -115,6 +116,9 @@ app.controller('FaultController', function($scope, $http, $location){
 	selected_option: {id: '1', name: 'outbound'},
     };
     $scope.selected_bw_option = 0;
+    $scope.latPeriod = 10;
+    $scope.lat = 1000;
+    $scope.latIP = '';
 
     $scope.cpustress = function() {
 	var N=$scope.cpu_N, T=$scope.cpu_T;
@@ -161,6 +165,14 @@ app.controller('FaultController', function($scope, $http, $location){
 	.success(function(response) {$scope.httpd_stop_resp = response;});
     }
     // return;
+
+    $scope.addLatency = function() {
+        var T = $scope.latPeriod, ip=$scope.latIP, L=$scope.lat;
+	console.log("[chenw]Add latency " + L + "(ms) for IP prefix " + ip + " for " + T + " seconds!")
+	$http.get('/anomaly/lat?T=' + T + '&L=' + L + "ms&ip=" + ip)
+	.success(function(response) {$scope.add_latency_resp = response;});
+    }
+
 });
 
 // app.controller('DashController', function($scope, Sources, Notes, Contributors, PlayerLibraries, ShowcaseLibraries) {

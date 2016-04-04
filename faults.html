@@ -122,6 +122,20 @@
       	{{bw_stress_resp}}
       </div>
       <br>
+      <div> <h2> Add latency for packets to an IP Prefix </h2>
+	Using "tc" tool to add network latency for packets sending to a denoted IP Prefix:<br>
+	<form ng-submit="addLatency()">
+		The duration of anomaly (Seconds):<br>
+          	<input type="number" ng-model="latPeriod" min="10" step="10" /><br>
+		The latency to add (ms):<br>
+		<input type="number" ng-model="lat" min="500" step="500" /><br>
+		The IP prefix to add latency (format: 192.168.0.1/24):<br>
+          	<input type="text" ng-model="latIP"/><br>
+          	<input type="submit" id="addlatency" value="Add Latency" />
+	</form>
+      	{{add_latency_resp}}
+      </div>
+      <br>
       <hr>
       <div> <h1><strong>Crash Faults</strong></h1> </div>
       <div> <h2>HTTPD serivce stops: </h2>
