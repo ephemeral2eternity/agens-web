@@ -106,7 +106,7 @@
       <hr>
       <div> <h1><strong>Network Related Faults: </strong></h1> </div>
       <div> <h2> Outbound/Inbound Capacity Throttling </h2>
-	Using "wondershaper" tool to throttle the inbound/outbound bandwidth to X Kbps to server overload/network congestion:<br>
+	Using "wondershaper" or "tc htb (hierachical token bucket)" tool to limit the inbound/outbound bandwidth to X Kbps for clients with denoted prefix:<br>
 	<form ng-submit="bwstress()">
 		<label>Throttle inbound/outbound traffic:
 			<select name="selected_option" id="selected_option" ng-model="bw_opts.selected_option">
@@ -117,6 +117,8 @@
 		<input type="number" ng-model="bw_X" min="100" step="100" /><br>
 		The duration of anomaly (Seconds):<br>
           	<input type="number" ng-model="bw_T" min="5" step="5" /><br>
+		The IP prefix to add latency (format: 192.168.0.1/24 or ALL):<br>
+          	<input type="text" ng-model="bwIP"/><br>
           	<input type="submit" id="bwstress" value="Throttle Bandwidth" />
 	</form>
       	{{bw_stress_resp}}
@@ -129,11 +131,25 @@
           	<input type="number" ng-model="latPeriod" min="10" step="10" /><br>
 		The latency to add (ms):<br>
 		<input type="number" ng-model="lat" min="500" step="500" /><br>
-		The IP prefix to add latency (format: 192.168.0.1/24):<br>
+		The IP prefix to add latency (format: 192.168.0.1/24 or ALL):<br>
           	<input type="text" ng-model="latIP"/><br>
           	<input type="submit" id="addlatency" value="Add Latency" />
 	</form>
       	{{add_latency_resp}}
+      </div>
+      <br>
+      <div> <h2> Drop packets to an IP Prefix </h2>
+	Using "tc" tool to randomly drop packets sending to a denoted IP Prefix:<br>
+	<form ng-submit="dropPkts()">
+		The duration of anomaly (Seconds):<br>
+          	<input type="number" ng-model="dropPeriod" min="10" step="10" /><br>
+		The percentage of packets to drop (%):<br>
+		<input type="number" ng-model="dropPercent" min="0" step="1" max="100" /><br>
+		The IP prefix to add latency (format: 192.168.0.1/24 or ALL):<br>
+          	<input type="text" ng-model="dropIP"/><br>
+          	<input type="submit" id="dropPkts" value="Drop Packets" />
+	</form>
+      	{{drop_pkts_resp}}
       </div>
       <br>
       <hr>

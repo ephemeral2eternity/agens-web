@@ -99,6 +99,7 @@ app.controller('FaultController', function($scope, $http, $location){
     $scope.mem_stress_resp = '';
     $scope.bw_stress_resp = '';
     $scope.add_latency_resp = '';
+    $scope.drop_pkts_resp = '';
     $scope.cpu_N = 1;
     $scope.cpu_T = 10;
     $scope.io_N = 2;
@@ -108,6 +109,7 @@ app.controller('FaultController', function($scope, $http, $location){
     $scope.mem_T = 10;
     $scope.bw_X = 400;
     $scope.bw_T = 30;
+    $scope.bwIP = '';
     $scope.httpd_T = 30;
     $scope.bw_opts = {
 	available_options: [
@@ -119,6 +121,9 @@ app.controller('FaultController', function($scope, $http, $location){
     $scope.latPeriod = 10;
     $scope.lat = 1000;
     $scope.latIP = '';
+    $scope.dropPeriod = 10;
+    $scope.dropPercent = 50;
+    $scope.dropIP = '';
 
     $scope.cpustress = function() {
 	var N=$scope.cpu_N, T=$scope.cpu_T;
@@ -144,18 +149,32 @@ app.controller('FaultController', function($scope, $http, $location){
     }
 
     $scope.bwstress = function() {
-	var X = $scope.bw_X, T=$scope.bw_T;
+	var X = $scope.bw_X, T=$scope.bw_T, ip=$scope.bwIP;
 	console.log($scope.bw_opts.selected_option);
 	if ($scope.bw_opts.selected_option.id == '0') {
-		console.log("[chenw]Starts throttling inbound bandwidth capacity to " + X + " Mbps for " + T + " seconds!")
-		$http.get('/anomaly/bw?type=0&X=' + X + '&T=' + T)
+		console.log("[chenw]Starts throttling inbound bandwidth capacity to " + X + " Kbps for " + T + " seconds for ip prefix " + ip)
+		$http.get('/anomaly/bw?type=0&X=' + X + '&T=' + T + '&ip=' + ip)
 		.success(function(response) {$scope.bw_stress_resp = response;});
 	}
 	else {
-		console.log("[chenw]Starts throttling outbound bandwidth capacity to " + X + " Mbps for " + T + " seconds!")
-		$http.get('/anomaly/bw?type=1&X=' + X + '&T=' + T)
+		console.log("[chenw]Starts throttling outbound bandwidth capacity to " + X + " Kbps for " + T + " seconds for ip prefix " + ip)
+		$http.get('/anomaly/bw?type=1&X=' + X + '&T=' + T + '&ip=' + ip)
 		.success(function(response) {$scope.bw_stress_resp = response;});
 	}
+    }
+
+    $scope.addLatency = function() {
+        var T = $scope.latPeriod, ip=$scope.latIP, L=$scope.lat;
+	console.log("[chenw]Add latency " + L + "(ms) for IP prefix " + ip + " for " + T + " seconds!")
+	$http.get('/anomaly/lat?T=' + T + '&L=' + L + "ms&ip=" + ip)
+	.success(function(response) {$scope.add_latency_resp = response;});
+    }
+
+    $scope.dropPkts = function () {
+	var T = $scope.dropPeriod, ip = $scope.dropIP, P = $scope.dropPercent;
+	console.log("[chenw]Drop packets with " + P + "% for IP prefix " + ip + " for " + T + " seconds!")
+	$http.get('/anomaly/drop?T=' + T + '&P=' + P + '%&ip=' + ip)
+	.success(function(response) {$scope.drop_pkts_resp = response;});
     }
 
     $scope.httpdstop = function() {
@@ -165,13 +184,6 @@ app.controller('FaultController', function($scope, $http, $location){
 	.success(function(response) {$scope.httpd_stop_resp = response;});
     }
     // return;
-
-    $scope.addLatency = function() {
-        var T = $scope.latPeriod, ip=$scope.latIP, L=$scope.lat;
-	console.log("[chenw]Add latency " + L + "(ms) for IP prefix " + ip + " for " + T + " seconds!")
-	$http.get('/anomaly/lat?T=' + T + '&L=' + L + "ms&ip=" + ip)
-	.success(function(response) {$scope.add_latency_resp = response;});
-    }
 
 });
 
